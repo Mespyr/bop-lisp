@@ -7,7 +7,7 @@ Node AST_Handler::next() {
 }
 
 object Null() {
-    return make_object(true, "0");
+    return make_object(BOP_NUMBER, "0");
 }
 
 
@@ -60,11 +60,11 @@ object Evaluator::evaluate(Node node) {
     if (node.type == ATOM) {
         Atom atom = node.atom;
         if (atom.type == NUMBER)
-            return make_object(true, atom.value);
+            return make_object(BOP_NUMBER, atom.value);
         else if (atom.type == STRING)
-            return make_object(false, atom.value); 
+            return make_object(BOP_STRING, atom.value); 
         else 
-            return make_object(false, "SYMBOL");
+            return make_object(BOP_STRING, "SYMBOL");
 
     } else {
         if (node.nodes.front().atom.value == "println") {
@@ -91,7 +91,7 @@ object Evaluator::evaluate(Node node) {
                 formatters.push_back(evaluate(n));
                 if (error_found) return Null();
             }
-            return make_object(false, Function_format_string(formatters));
+            return make_object(BOP_STRING, Function_format_string(formatters));
         }
         
         // Add
@@ -107,7 +107,7 @@ object Evaluator::evaluate(Node node) {
                 formatters.push_back(evaluate(n));
                 if (error_found) return Null();
             }
-            return make_object(true, Function_add_nums(formatters));
+            return make_object(BOP_NUMBER, Function_add_nums(formatters));
         }
         
         // Subtract
@@ -123,7 +123,7 @@ object Evaluator::evaluate(Node node) {
                 formatters.push_back(evaluate(n));
                 if (error_found) return Null();
             }
-            return make_object(true, Function_subtract_nums(formatters));
+            return make_object(BOP_NUMBER, Function_subtract_nums(formatters));
         }
         
         // Multiply
@@ -139,7 +139,7 @@ object Evaluator::evaluate(Node node) {
                 formatters.push_back(evaluate(n));
                 if (error_found) return Null();
             }
-            return make_object(true, Function_times_nums(formatters));
+            return make_object(BOP_NUMBER, Function_times_nums(formatters));
         }
         
         // Divide
@@ -155,7 +155,7 @@ object Evaluator::evaluate(Node node) {
                 formatters.push_back(evaluate(n));
                 if (error_found) return Null();
             }
-            return make_object(true, Function_div_nums(formatters));
+            return make_object(BOP_NUMBER, Function_div_nums(formatters));
         }
 
         else {

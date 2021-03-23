@@ -1,0 +1,36 @@
+& This is what Bop code will look like in the end
+This is just the design. It currently does not work.
+Comments are surrounded by and signs &
+
+& Fibonacci Sequence &
+(defunc (fib n)
+    (if (or 
+        (= n 1) (= n 0)) n 
+        (+ (fib (- n 1))
+            (fib (- n 2)))))
+(println (fib 10))
+
+
+& Fizzbuzz Example &
+(defunc (div_by5 x)
+    (not (% x 5)))
+
+(defunc (div_by3 x) 
+    (not (% x 3)))
+
+(defunc (div_by3_5 x) 
+    (and (div_by3 x) (div_by5 x)))
+
+(defunc (fizzbuzz x limit)
+    (while (less x limit) 
+        (do (let x (+ x 1))
+            (if (div_by3_5 x) 
+                (println 'Fizzbuzz')
+                (if (div_by3 x) 
+                    (println 'Fizz')
+                    (if (div_by5 x) 
+                        (println 'Buzz') 
+                        (println x)))))))
+
+& start fizzbuzz from zero to 100 &
+(fizzbuzz 0 100) 

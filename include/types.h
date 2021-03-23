@@ -44,7 +44,7 @@ double to_number(std::string fl);
 std::string repr(object obj);
 
 // Make object 
-object make_object(bool type_is_num, std::string value);
+object make_object(Type type_, std::string value);
 
 
 #endif

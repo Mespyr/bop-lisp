@@ -5,6 +5,7 @@ TokenList tokenize(std::string code) {
     TokenList stream;
     std::string word;
     bool string_has_started = false;
+    bool in_comment = false;
 
     unsigned int line = 1;
 
@@ -13,7 +14,11 @@ TokenList tokenize(std::string code) {
         char buf = code.at(i);
         if (buf == '\n') line++;
 
-        if (buf == '\'') {
+        if (buf == '&') {
+            in_comment = !in_comment;
+        } else if(in_comment);
+
+        else if (buf == '\'') {
             word.push_back(buf);
             if(!string_has_started) {
                 string_has_started = true;

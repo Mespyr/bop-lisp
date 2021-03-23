@@ -14,10 +14,9 @@ double to_number(std::string fl) {
     return atof(fl.c_str());
 }
 
-object make_object(bool type_is_num, std::string value) {
+object make_object(Type type_, std::string value) {
     object obj;
-    if (type_is_num) obj.type = BOP_NUMBER;
-    else obj.type = BOP_STRING;
+    obj.type = type_;
     obj.value = value;
     return obj;
 }

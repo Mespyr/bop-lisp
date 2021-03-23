@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+
+# bop executable
+bop

@@ -1,0 +1,5 @@
+(println 'Hello World!')
+(println 'This is Bop! ')
+(println (println 'This is an inner println'))
+(println 'println and print return 0.')
+(print (print 'Here. '))

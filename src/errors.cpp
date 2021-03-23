@@ -27,11 +27,25 @@ std::string KeywordError::error() {
     error_string += msg;
     return error_string;
 }
+std::string DivisionByZeroError::error() {
+    std::string error_string;
+    error_string += "DivisionByZero Error on line " + std::to_string(line) + ".\n";
+    error_string += "Can't divide number by 0.";
+    return error_string;
+}
+std::string TypeError::error() {
+    std::string error_string;
+    error_string += "Type Error on line " + std::to_string(line) + ".\n";
+    error_string += msg;
+    return error_string;
+}
 
 // Map for default error
 std::string ErrorMap::error() {
     if (type == ARGUMENT_ERROR) return arg.error();
     if (type == KEYWORD_ERROR) return keyword.error();
-    else return "Hey!!";
+    if (type == DIVISION_BY_ZERO_ERROR) return division.error();
+    if (type == TYPE_ERROR) return type_.error();
+    else return "Error Found with Bop: Can't get Error Type.";
 }
 

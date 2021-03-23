@@ -79,6 +79,7 @@ object Evaluator::evaluate(Node node) {
             std::cout << repr(obj);
             return Null();
         } 
+        
         else if (node.nodes.front().atom.value == "format") {
             if ( (int) node.nodes.size() == 1) {
                 error_found = true;
@@ -104,7 +105,13 @@ object Evaluator::evaluate(Node node) {
             std::vector<object> formatters;
             for (int i = 1; i < (int) node.nodes.size(); i++) {
                 Node n = node.nodes.at(i);
-                formatters.push_back(evaluate(n));
+                object o = evaluate(n);
+                if (o.type != BOP_NUMBER) {
+                    error_found = true;
+                    error.type = TYPE_ERROR;
+                    error.type_ = TypeError{"Can't add with non-numeric type.", node.nodes.front().atom.line};
+                }
+                formatters.push_back(o);
                 if (error_found) return Null();
             }
             return make_object(BOP_NUMBER, Function_add_nums(formatters));
@@ -120,7 +127,13 @@ object Evaluator::evaluate(Node node) {
             std::vector<object> formatters;
             for (int i = 1; i < (int) node.nodes.size(); i++) {
                 Node n = node.nodes.at(i);
-                formatters.push_back(evaluate(n));
+                object o = evaluate(n);
+                if (o.type != BOP_NUMBER) {
+                    error_found = true;
+                    error.type = TYPE_ERROR;
+                    error.type_ = TypeError{"Can't subtract with non-numeric type.", node.nodes.front().atom.line};
+                }
+                formatters.push_back(o);
                 if (error_found) return Null();
             }
             return make_object(BOP_NUMBER, Function_subtract_nums(formatters));
@@ -136,7 +149,13 @@ object Evaluator::evaluate(Node node) {
             std::vector<object> formatters;
             for (int i = 1; i < (int) node.nodes.size(); i++) {
                 Node n = node.nodes.at(i);
-                formatters.push_back(evaluate(n));
+                object o = evaluate(n);
+                if (o.type != BOP_NUMBER) {
+                    error_found = true;
+                    error.type = TYPE_ERROR;
+                    error.type_ = TypeError{"Can't multiply with non-numeric type.", node.nodes.front().atom.line};
+                }
+                formatters.push_back(o);
                 if (error_found) return Null();
             }
             return make_object(BOP_NUMBER, Function_times_nums(formatters));
@@ -152,7 +171,17 @@ object Evaluator::evaluate(Node node) {
             std::vector<object> formatters;
             for (int i = 1; i < (int) node.nodes.size(); i++) {
                 Node n = node.nodes.at(i);
-                formatters.push_back(evaluate(n));
+                object o = evaluate(n);
+                if (o.type != BOP_NUMBER) {
+                    error_found = true;
+                    error.type = TYPE_ERROR;
+                    error.type_ = TypeError{"Can't divide with non-numeric type.", node.nodes.front().atom.line};
+                } else if (o.value == "0") {
+                    error_found = true;
+                    error.type = DIVISION_BY_ZERO_ERROR;
+                    error.division = DivisionByZeroError{node.nodes.front().atom.line};
+                }
+                formatters.push_back(o);
                 if (error_found) return Null();
             }
             return make_object(BOP_NUMBER, Function_div_nums(formatters));
@@ -161,8 +190,7 @@ object Evaluator::evaluate(Node node) {
         else {
                 error_found = true;
                 error.type = KEYWORD_ERROR;
-                error.keyword = KeywordError{"Unrecogonized keyword '" + 
-                                                node.nodes.front().atom.value + "'.", 
+                error.keyword = KeywordError{"Unrecogonized keyword '" + node.nodes.front().atom.value + "'.", 
                     node.nodes.front().atom.line};
         }
     }

@@ -22,6 +22,7 @@ struct ArgumentError {
     unsigned int line;
     std::string error();
 };
+
 struct KeywordError {
     std::string msg;
     unsigned int line;

@@ -4,6 +4,7 @@
 #include "parser.h"
 #include "types.h"
 #include "errors.h"
+#include "env.h"
 
 #include <vector>
 
@@ -17,6 +18,7 @@ struct AST_Handler {
 
 class Evaluator {
     public:
+        Env env;
         ErrorMap error;
         bool error_found = false;
 

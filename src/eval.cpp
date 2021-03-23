@@ -10,7 +10,6 @@ object Null() {
     return make_object(BOP_NUMBER, "0");
 }
 
-
 // formatting strings
 std::string Function_format_string(std::vector<object> objs) {
     std::string res;
@@ -63,23 +62,72 @@ object Evaluator::evaluate(Node node) {
             return make_object(BOP_NUMBER, atom.value);
         else if (atom.type == STRING)
             return make_object(BOP_STRING, atom.value); 
-        else 
-            return make_object(BOP_STRING, "SYMBOL");
+        else {
+            if (env.has_key(atom.value)) return env.at_key(atom.value); 
+            else {
+                error_found = true;
+                error.type = KEYWORD_ERROR;
+                error.keyword = KeywordError{"Undefined variable '" + atom.value + "'.", 
+                    atom.line};
+                return Null();
+            }
+        }
 
     } else {
         if (node.nodes.front().atom.value == "println") {
+            if ((int) node.nodes.size() > 2) {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"Too many arguments passed for 'println'.", node.nodes.front().atom.line};
+            } else if ((int) node.nodes.size() == 1) {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"No arguments passed for 'println'.", node.nodes.front().atom.line};
+            }
             object obj = evaluate(node.nodes.back());
             if (error_found) return Null();
             std::cout << repr(obj) << std::endl;
             return Null();
         } 
         else if (node.nodes.front().atom.value == "print") {
+            if ((int) node.nodes.size() > 2) {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"Too many arguments passed for 'print'.", node.nodes.front().atom.line};
+            } else if ((int) node.nodes.size() == 1) {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"No arguments passed for 'print'.", node.nodes.front().atom.line};
+            }
             object obj = evaluate(node.nodes.back());
             if (error_found) return Null();
             std::cout << repr(obj);
             return Null();
         } 
-        
+        else if (node.nodes.front().atom.value == "let") {
+            if ((int) node.nodes.size() > 3) {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"Too many arguments passed for 'let'.", node.nodes.front().atom.line};
+            } else if ((int) node.nodes.size() < 3) {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"Insufficient number of arguments passed for 'let'.", node.nodes.front().atom.line};
+            }
+            object obj = evaluate(node.nodes.back());
+            if (node.nodes.at(1).atom.type != SYMBOL) {
+                error_found = true;
+                error.type = KEYWORD_ERROR;
+                error.keyword = KeywordError{"Can't set variable name to non-symbol type.", 
+                    node.nodes.front().atom.line};
+            }
+            if (error_found) return Null();
+            
+            env.set_key(node.nodes.at(1).atom.value, obj);
+            return Null();
+        }
+
+
         else if (node.nodes.front().atom.value == "format") {
             if ( (int) node.nodes.size() == 1) {
                 error_found = true;
@@ -188,10 +236,10 @@ object Evaluator::evaluate(Node node) {
         }
 
         else {
-                error_found = true;
-                error.type = KEYWORD_ERROR;
-                error.keyword = KeywordError{"Unrecogonized keyword '" + node.nodes.front().atom.value + "'.", 
-                    node.nodes.front().atom.line};
+            error_found = true;
+            error.type = KEYWORD_ERROR;
+            error.keyword = KeywordError{"Unrecogonized keyword '" + node.nodes.front().atom.value + "'.", 
+                node.nodes.front().atom.line};
         }
     }
     return Null();

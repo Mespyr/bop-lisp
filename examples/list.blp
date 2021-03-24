@@ -1,0 +1,24 @@
+& list and index example &
+(let x (list 1 2 3 4))
+(println x)
+(println (first x))
+(println (last x))
+
+(let list_in_lists 
+    (list 21 15 16 
+        (list 12 15)))
+(println (last (last list_in_lists)))
+
+(let str 'Hello World!')
+(println (first str))
+(println (last str))
+(println (rest str))
+
+(let new_list (list 44 45 46 47 48 49))
+(let sub_list (rest new_list))
+
+(println (first sub_list))
+(println (first new_list))
+
+(let error_list (list))
+(println (rest error_list)) & should raise error &

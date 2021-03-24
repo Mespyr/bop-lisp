@@ -4,7 +4,11 @@
 #include "token.h"
 
 typedef enum {
-    ARGUMENT_ERROR, KEYWORD_ERROR, DIVISION_BY_ZERO_ERROR, TYPE_ERROR
+    ARGUMENT_ERROR, 
+    KEYWORD_ERROR, 
+    DIVISION_BY_ZERO_ERROR, 
+    TYPE_ERROR,
+    INDEX_ERROR
 } ErrorType;
 
 
@@ -37,6 +41,12 @@ struct TypeError {
     unsigned int line;
     std::string error();
 };
+struct IndexError {
+    std::string msg;
+    unsigned int line;
+    std::string error();
+};
+
 
 struct ErrorMap {
     ErrorType type;
@@ -44,6 +54,7 @@ struct ErrorMap {
     KeywordError keyword;
     TypeError type_;
     DivisionByZeroError division;
+    IndexError index;
     std::string error();
 };
 

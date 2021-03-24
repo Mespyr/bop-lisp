@@ -18,7 +18,7 @@ struct AST_Handler {
 
 class Evaluator {
     public:
-        Env env;
+        Env_Stack env_stack;
         ErrorMap error;
         bool error_found = false;
 

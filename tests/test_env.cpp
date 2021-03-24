@@ -1,6 +1,4 @@
-#include <vector>
-#include <string>
-#include <iostream>
+#include "test_env.h"
 
 // Slightly modified Env struct 
 struct test_env
@@ -41,8 +39,6 @@ struct test_env
     }
 };
 
-
-
 int main(int argc, char const *argv[])
 {
     test_env env;
@@ -51,5 +47,11 @@ int main(int argc, char const *argv[])
     env.print();
     env.set_key("My Second Key", "New value!");
     env.print();
+    pass_default_x("HIIII", 12);
+    pass_default_x("TOKHB", 12);
     return 0;
+}
+
+void pass_default_x(std::string value, int x) {
+    std::cout << value << x;
 }

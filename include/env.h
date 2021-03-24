@@ -17,4 +17,21 @@ struct Env {
     void print();
 };
 
+struct Env_Stack {
+    std::vector<Env> stack{Env{}};
+    Env back() {
+        return stack.back();
+    }
+    void push(Env e) {
+        stack.push_back(e);
+    } 
+    void pop() {
+        stack.pop_back();
+    }
+    void new_() {
+        Env n = back();
+        stack.push_back(n);
+    }
+};
+
 #endif

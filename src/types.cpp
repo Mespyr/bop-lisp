@@ -7,6 +7,7 @@ std::string format_string(std::string str) {
 
 std::string repr(object obj) {
     if (obj.type == BOP_NUMBER) return obj.value;
+    else if (obj.type == BOP_LIST) return "<List>";
     return format_string(obj.value);
 } 
 
@@ -14,9 +15,11 @@ double to_number(std::string fl) {
     return atof(fl.c_str());
 }
 
-object make_object(Type type_, std::string value) {
+object make_object(Type type_, std::string value, std::vector<object> list) {
     object obj;
     obj.type = type_;
-    obj.value = value;
+    if (type_ == BOP_LIST) {
+        obj.list = list;
+    } else obj.value = value;
     return obj;
 }

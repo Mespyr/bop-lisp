@@ -39,6 +39,12 @@ std::string TypeError::error() {
     error_string += msg;
     return error_string;
 }
+std::string IndexError::error() {
+    std::string error_string;
+    error_string += "Index Error on line " + std::to_string(line) + ".\n";
+    error_string += msg;
+    return error_string;
+}
 
 // Map for default error
 std::string ErrorMap::error() {
@@ -46,6 +52,7 @@ std::string ErrorMap::error() {
     if (type == KEYWORD_ERROR) return keyword.error();
     if (type == DIVISION_BY_ZERO_ERROR) return division.error();
     if (type == TYPE_ERROR) return type_.error();
+    if (type == INDEX_ERROR) return index.error();
     else return "Error Found with Bop: Can't get Error Type.";
 }
 

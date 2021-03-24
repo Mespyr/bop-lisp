@@ -63,7 +63,7 @@ object Evaluator::evaluate(Node node) {
         else if (atom.type == STRING)
             return make_object(BOP_STRING, atom.value); 
         else {
-            if (env.has_key(atom.value)) return env.at_key(atom.value); 
+            if (env_stack.back().has_key(atom.value)) return env_stack.back().at_key(atom.value); 
             else {
                 error_found = true;
                 error.type = KEYWORD_ERROR;
@@ -122,11 +122,12 @@ object Evaluator::evaluate(Node node) {
                     node.nodes.front().atom.line};
             }
             if (error_found) return Null();
-            
+            Env env = env_stack.back();
             env.set_key(node.nodes.at(1).atom.value, obj);
+            env_stack.pop();
+            env_stack.push(env);
             return Null();
         }
-
 
         else if (node.nodes.front().atom.value == "format") {
             if ( (int) node.nodes.size() == 1) {
@@ -234,6 +235,142 @@ object Evaluator::evaluate(Node node) {
             }
             return make_object(BOP_NUMBER, Function_div_nums(formatters));
         }
+
+        // Type Stuff
+        else if (node.nodes.front().atom.value == "list") {
+            if ((int)node.nodes.size() == 1) return make_object(BOP_LIST, "");
+            else {
+                std::vector<object> formatters;
+                for (int i = 1; i < (int) node.nodes.size(); i++) {
+                    Node n = node.nodes.at(i);
+                    object o = evaluate(n);
+                    formatters.push_back(o);
+                    if (error_found) return Null();
+                }
+                return make_object(BOP_LIST, "", formatters);
+            }
+        }
+        else if (node.nodes.front().atom.value == "first") {
+            if ( (int) node.nodes.size() == 1) {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"No arguments passed for 'first'.", node.nodes.front().atom.line};
+            }
+            else if ((int) node.nodes.size() > 2) {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"Too many arguments passed for 'first'.", node.nodes.front().atom.line};
+            }
+            object obj = evaluate(node.nodes.at(1));
+            if (error_found) return Null();
+            if (obj.type != BOP_LIST and obj.type != BOP_STRING) {
+                error_found = true;
+                error.type = TYPE_ERROR;
+                error.type_ = TypeError{"Can't get first value on type that isn't string or list.", node.nodes.front().atom.line};
+                return Null();
+            }
+            if (obj.type == BOP_LIST){
+                if ((int)obj.list.size() == 0) {
+                    error_found = true;
+                    error.type = INDEX_ERROR;
+                    error.index = IndexError{"Can't get first value from empty list.", node.nodes.front().atom.line};
+                    return Null();
+                }
+                return obj.list.front();
+            }
+            else {
+                if ((int)obj.value.length() == 0) {
+                    error_found = true;
+                    error.type = INDEX_ERROR;
+                    error.index = IndexError{"Can't get first value from empty string.", node.nodes.front().atom.line};
+                    return Null();
+                }
+                return make_object(BOP_STRING, "'"+repr(obj).substr(0, 1)+"'"); 
+            }
+        }
+        else if (node.nodes.front().atom.value == "last") {
+            if ( (int) node.nodes.size() == 1) {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"No arguments passed for last'.", node.nodes.front().atom.line};
+            }
+            else if ((int) node.nodes.size() > 2) {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"Too many arguments passed for 'last'.", node.nodes.front().atom.line};
+            }
+            object obj = evaluate(node.nodes.at(1));
+            if (error_found)
+                return Null();
+            if (obj.type != BOP_LIST and obj.type != BOP_STRING) {
+                error_found = true;
+                error.type = TYPE_ERROR;
+                error.type_ = TypeError{"Can't get last value on type that isn't string or list.", node.nodes.front().atom.line};
+                return Null();
+            }
+            if (obj.type == BOP_LIST) {
+                if ((int)obj.list.size() == 0) {
+                    error_found = true;
+                    error.type = INDEX_ERROR;
+                    error.index = IndexError{"Can't get last value from empty list.", node.nodes.front().atom.line};
+                    return Null();
+                }
+                return obj.list.back();
+            } else {
+                if ((int)obj.value.length() == 0) {
+                    error_found = true;
+                    error.type = INDEX_ERROR;
+                    error.index = IndexError{"Can't get last value from empty string.", node.nodes.front().atom.line};
+                    return Null();
+                }
+                std::string c;
+                c.push_back(repr(obj).back());
+                return make_object(BOP_STRING, "'" + c + "'"); 
+            }
+        }
+        else if (node.nodes.front().atom.value == "rest") {
+            if ( (int) node.nodes.size() == 1) {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"No arguments passed for 'rest'.", node.nodes.front().atom.line};
+            }
+            else if ((int) node.nodes.size() > 2) {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"Too many arguments passed for 'rest'.", node.nodes.front().atom.line};
+            }
+            object obj = evaluate(node.nodes.at(1));
+            if (error_found) return Null();
+            if (obj.type != BOP_LIST and obj.type != BOP_STRING) {
+                error_found = true;
+                error.type = TYPE_ERROR;
+                error.type_ = TypeError{"Can't get values on type that isn't string or list.", node.nodes.front().atom.line};
+                return Null();
+            }
+            if (obj.type == BOP_LIST) {
+                if ((int)obj.list.size() == 0) {
+                    error_found = true;
+                    error.type = INDEX_ERROR;
+                    error.index = IndexError{"Can't get the rest of a list that is empty.", node.nodes.front().atom.line};
+                    return Null();
+                }
+                std::vector<object> sub_list;
+                for (int i = 1; i < obj.list.size(); i++) {
+                    sub_list.push_back(obj.list.at(i));
+                }
+                return make_object(BOP_LIST, "", sub_list);
+            }
+            else {
+                if ((int)obj.value.length() == 0) {
+                    error_found = true;
+                    error.type = INDEX_ERROR;
+                    error.index = IndexError{"Can't get the rest of a  string that is empty.", node.nodes.front().atom.line};
+                    return Null();
+                }
+                return make_object(BOP_STRING, "'"+repr(obj).substr(1)+"'"); 
+            }
+        }
+
 
         else {
             error_found = true;

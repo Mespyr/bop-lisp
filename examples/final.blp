@@ -1,8 +1,8 @@
-& This is what Bop code will look like in the end
+; This is what Bop code will look like in the end
 This is just the design. It currently does not work.
-Comments are surrounded by and signs &
+Comments are surrounded by semicolons ;
 
-& Recursive Fibonacci Sequence &
+; Recursive Fibonacci Sequence ;
 (let fib (fn (n)
     (if (or (= n 1) (= n 0)) n 
         (+ (fib (- n 1))
@@ -11,7 +11,7 @@ Comments are surrounded by and signs &
 (println (fib 10))
 
 
-& Fizzbuzz Example &
+; Fizzbuzz Example ;
 (let div_by5 
     (fn (x) (not (% x 5))))
 
@@ -34,5 +34,5 @@ Comments are surrounded by and signs &
                             (println 'Buzz') 
                             (println x))))))))
 
-& start fizzbuzz from zero to 100 &
+; start fizzbuzz from zero to 100 ;
 (fizzbuzz 0 100) 

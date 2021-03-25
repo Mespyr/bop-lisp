@@ -14,7 +14,7 @@ TokenList tokenize(std::string code) {
         char buf = code.at(i);
         if (buf == '\n') line++;
 
-        if (buf == '&' and !string_has_started) {
+        if (buf == ';' and !string_has_started) {
             in_comment = !in_comment;
         } else if(in_comment);
 

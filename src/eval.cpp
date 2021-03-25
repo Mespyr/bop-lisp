@@ -424,7 +424,6 @@ object Evaluator::evaluate(Node node) {
             }
 
         }
-
         else if (node.nodes.front().atom.value == "append") {
             if ( (int) node.nodes.size() < 3) {
                 error_found = true;
@@ -453,8 +452,6 @@ object Evaluator::evaluate(Node node) {
             return obj;
 
         }
-        
-
         else if (node.nodes.front().atom.value == "push") {
             if ( (int) node.nodes.size() <3) {
                 error_found = true;
@@ -482,6 +479,26 @@ object Evaluator::evaluate(Node node) {
             // std::cout << appender.value << std::endl;
             return obj;
         }
+
+        // Input 
+        else if (node.nodes.front().atom.value == "read") {
+            if ((int) node.nodes.size() > 2) {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"Too many arguments passed for 'read'.", node.nodes.front().atom.line};
+                return Null();
+            } else if ((int) node.nodes.size() == 1) {
+                std::string input;
+                getline(std::cin, input);
+                return make_object(BOP_STRING, "'"+input+"'");
+            }
+            object obj = evaluate(node.nodes.back());
+            if (error_found) return Null();
+            std::cout << repr(obj);
+            std::string input;
+            getline(std::cin, input);
+            return make_object(BOP_STRING, "'"+input+"'");
+        } 
 
 
         else {

@@ -1,3 +1,3 @@
-# bop
+# Bop
 
-Bop is a lisp language written in C++.
+Bop is a lisp programming language written in C++. 

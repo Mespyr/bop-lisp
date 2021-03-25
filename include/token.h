@@ -6,16 +6,16 @@
 #include <iostream>
 
 // Token struct
-struct _Token
+class Token 
 {
+public:
     unsigned int line;
     std::string value;
 };
-typedef struct _Token Token;
 
 
 // List of tokens
-struct _TokenList
+struct TokenList
 {
     std::vector<Token> token_stream = {};
     void out()
@@ -27,7 +27,6 @@ struct _TokenList
         }
     }
 };
-typedef struct _TokenList TokenList;
 
 
 #endif

@@ -1,6 +1,6 @@
 CPP = g++
 CPPFLAGS = -c -g
-LDFLAGS = -g
+LDFLAGS = -g -lreadline
 SRC = $(wildcard src/*.cpp)
 HDR = $(wildcard include/*.h)
 OBJ = $(SRC:.cpp=.o)

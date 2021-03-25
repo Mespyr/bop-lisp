@@ -8,21 +8,22 @@
 
 #include <vector>
 
-struct AST_Handler {
+class AST_Handler 
+{
+public:
     AST ast;
     unsigned int ptr;
     bool eof = false;
-
     Node next();
 };
 
-class Evaluator {
-    public:
-        Env_Stack env_stack;
-        ErrorMap error;
-        bool error_found = false;
-
-        object evaluate(Node node);
+class Evaluator 
+{
+public:
+    Env_Stack env_stack;
+    ErrorMap error;
+    bool error_found = false;
+    object evaluate(Node node);
 };
 
 
@@ -32,7 +33,6 @@ std::string Function_add_nums(std::vector<object> objs);
 std::string Function_subtract_nums(std::vector<object> objs);
 std::string Function_times_nums(std::vector<object> objs);
 std::string Function_div_nums(std::vector<object> objs);
-
 
 object Null();
 

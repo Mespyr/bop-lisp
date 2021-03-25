@@ -4,9 +4,12 @@
 #include <vector>
 #include <string>
 #include <iostream>
+
 #include "types.h"
 
-struct Env {
+class Env 
+{
+public:
     std::vector<std::string> keys;
     std::vector<object> values;
 
@@ -17,18 +20,28 @@ struct Env {
     void print();
 };
 
-struct Env_Stack {
+class Env_Stack 
+{
+public:
     std::vector<Env> stack{Env{}};
-    Env back() {
+
+    Env back() 
+    {
         return stack.back();
     }
-    void push(Env e) {
+
+    void push(Env e) 
+    {
         stack.push_back(e);
     } 
-    void pop() {
+
+    void pop() 
+    {
         stack.pop_back();
     }
-    void new_() {
+
+    void new_() 
+    {
         Env n = back();
         stack.push_back(n);
     }

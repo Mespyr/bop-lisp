@@ -7,7 +7,9 @@
 
 
 // Atom
-struct Atom {
+class Atom 
+{
+public:
     std::string value;
     unsigned int line;
     AtomType type;
@@ -16,7 +18,9 @@ struct Atom {
 
 
 // Node, which can either be an Atom or a List
-struct Node {
+class Node 
+{
+public:
     NodeType type;
     std::vector<Node> nodes;
     Atom atom;
@@ -24,28 +28,34 @@ struct Node {
 
 
 // AST which holds nodes, and errors
-struct AST {
+class AST 
+{
+public:
     std::vector<Node> nodes;
     bool error_found = false;
     ParsingError error;
 };
 
 
-
 // Reader, which feeds the next token to parse into AST
-struct Reader {
+class Reader 
+{
+public:
     TokenList tokens;
     int ptr;
     bool eof = false;
 
-    Token next() {
+    Token next() 
+    {
         ptr++;
-        if (ptr >= (int) tokens.token_stream.size()) {
+        if (ptr >= (int) tokens.token_stream.size()) 
+        {
             eof = true;
         }
         return tokens.token_stream.at(ptr-1);
     }
-    Token peek() {
+    Token peek() 
+    {
         return tokens.token_stream.at(ptr);
     }
 
@@ -57,7 +67,6 @@ struct Reader {
 // Functions
 TokenList tokenize(std::string code);
 AST parse(TokenList tokens);
-
 Atom create_atom(Token tok);
 
 // Check type of token

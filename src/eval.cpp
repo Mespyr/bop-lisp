@@ -144,6 +144,7 @@ object Evaluator::evaluate(Node node) {
             return make_object(BOP_STRING, Function_format_string(formatters));
         }
         
+        // Math
         // Add
         else if (node.nodes.front().atom.value == "+") {
             if ( (int) node.nodes.size() == 1) {
@@ -165,7 +166,6 @@ object Evaluator::evaluate(Node node) {
             }
             return make_object(BOP_NUMBER, Function_add_nums(formatters));
         }
-        
         // Subtract
         else if (node.nodes.front().atom.value == "-") {
             if ( (int) node.nodes.size() == 1) {
@@ -187,7 +187,6 @@ object Evaluator::evaluate(Node node) {
             }
             return make_object(BOP_NUMBER, Function_subtract_nums(formatters));
         }
-        
         // Multiply
         else if (node.nodes.front().atom.value == "*") {
             if ( (int) node.nodes.size() == 1) {
@@ -209,7 +208,6 @@ object Evaluator::evaluate(Node node) {
             }
             return make_object(BOP_NUMBER, Function_times_nums(formatters));
         }
-        
         // Divide
         else if (node.nodes.front().atom.value == "/") {
             if ( (int) node.nodes.size() == 1) {
@@ -236,7 +234,9 @@ object Evaluator::evaluate(Node node) {
             return make_object(BOP_NUMBER, Function_div_nums(formatters));
         }
 
-        // Type Stuff
+
+
+        // Indexing
         else if (node.nodes.front().atom.value == "list") {
             if ((int)node.nodes.size() == 1) return make_object(BOP_LIST, "");
             else {
@@ -369,6 +369,118 @@ object Evaluator::evaluate(Node node) {
                 }
                 return make_object(BOP_STRING, "'"+repr(obj).substr(1)+"'"); 
             }
+        }
+        else if (node.nodes.front().atom.value == "getf") {
+            if ( (int) node.nodes.size() < 3) {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"Insufficent number of arguments passed for 'getf'.", node.nodes.front().atom.line};
+            }
+            else if ((int) node.nodes.size() > 3) {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"Too many arguments passed for 'getf'.", node.nodes.front().atom.line};
+            }
+
+            object obj = evaluate(node.nodes.at(1));
+            if (error_found)return Null();
+            object idx = evaluate(node.nodes.at(2));
+            if (error_found)return Null();
+
+            if (obj.type != BOP_LIST and obj.type != BOP_STRING) {
+                error_found = true;
+                error.type = TYPE_ERROR;
+                error.type_ = TypeError{"Can't get value from type that isn't string or list.", node.nodes.front().atom.line};
+                return Null();
+            }
+            if (idx.type != BOP_NUMBER) {
+                error_found = true;
+                error.type = TYPE_ERROR;
+                error.type_ = TypeError{"Can't get use value that isn't number as index.", node.nodes.front().atom.line};
+                return Null();
+            } 
+            
+            if (obj.type == BOP_LIST) {
+                if (atoi(idx.value.c_str()) >= (int)obj.list.size()) {
+                    error_found = true;
+                    error.type = INDEX_ERROR;
+                    error.index = IndexError{"Index " + idx.value + " out of range.", node.nodes.front().atom.line};
+                    return Null();
+                } 
+                return obj.list.at(atoi(idx.value.c_str()));
+            } else if (obj.type == BOP_STRING) {
+                if (atoi(idx.value.c_str()) >= (int)obj.value.length()) {
+                    error_found = true;
+                    error.type = INDEX_ERROR;
+                    error.index = IndexError{"Index " + idx.value + " out of range.", node.nodes.front().atom.line};
+                    return Null();
+                }
+                int idx_ = atoi(idx.value.c_str());
+                std::string str = "'"; 
+                str.push_back(obj.value.at(idx_));
+                str.push_back('\'');
+
+                return make_object(BOP_STRING, str);
+            }
+
+        }
+
+        else if (node.nodes.front().atom.value == "append") {
+            if ( (int) node.nodes.size() < 3) {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"Insufficent number of arguments passed for 'append'.", node.nodes.front().atom.line};
+            }
+            else if ((int) node.nodes.size() > 3) {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"Too many arguments passed for 'append'.", node.nodes.front().atom.line};
+            }
+
+            object obj = evaluate(node.nodes.at(2));
+            if (error_found) return Null();
+            object appender = evaluate(node.nodes.at(1));
+            if (error_found) return Null();
+
+            if (obj.type != BOP_LIST) {
+                error_found = true;
+                error.type = TYPE_ERROR;
+                error.type_ = TypeError{"Can't append value to type that isn't list.", node.nodes.front().atom.line};
+                return Null();
+            }
+            obj.list.push_back(appender);
+            // std::cout << appender.value << std::endl;
+            return obj;
+
+        }
+        
+
+        else if (node.nodes.front().atom.value == "push") {
+            if ( (int) node.nodes.size() <3) {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"Insufficent number of arguments passed for 'push'.", node.nodes.front().atom.line};
+            }
+            else if ((int) node.nodes.size() > 3) {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"Too many arguments passed for 'push'.", node.nodes.front().atom.line};
+            }
+
+            object obj = evaluate(node.nodes.at(2));
+            if (error_found) return Null();
+            object appender = evaluate(node.nodes.at(1));
+            if (error_found) return Null();
+
+            if (obj.type != BOP_LIST) {
+                error_found = true;
+                error.type = TYPE_ERROR;
+                error.type_ = TypeError{"Can't push value to type that isn't list.", node.nodes.front().atom.line};
+                return Null();
+            }
+            obj.list.insert(obj.list.begin(), appender);
+            // std::cout << appender.value << std::endl;
+            return obj;
         }
 
 

@@ -20,5 +20,12 @@
 (println (first sub_list))
 (println (first new_list))
 
-(let error_list (list))
-(println (rest error_list)) & should raise error &
+(println (getf new_list 2))
+(println 
+    (format (getf str 2) ' is the 3rd letter in "Hello World!".'))
+
+(let new_list (append 'appended value' new_list))
+(println (last new_list))
+
+(let sub_list (push 'Pushed Value' sub_list))
+(println (first sub_list))

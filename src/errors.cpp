@@ -55,4 +55,3 @@ std::string ErrorMap::error() {
     if (type == INDEX_ERROR) return index.error();
     else return "Error Found with Bop: Can't get Error Type.";
 }
-

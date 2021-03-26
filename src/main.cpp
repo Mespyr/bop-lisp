@@ -2,9 +2,6 @@
 #include "../include/parser.h"
 #include "../include/eval.h"
 
-#include <readline/readline.h>
-#include <readline/history.h>
-
 // Print AST for debugging
 void ast_out(std::vector<Node> nodes, std::string indent = "") 
 {
@@ -22,7 +19,6 @@ void ast_out(std::vector<Node> nodes, std::string indent = "")
         }
     }
 }
-
 
 // Evaluate String
 int evalString(std::string code) 
@@ -52,7 +48,7 @@ int evalString(std::string code)
     return 0;
 }
 
-// TODO: Repl for Bop
+// REPL for Bop
 void REPL()
 {  
     printf("Bop Version 1.0.0\n");
@@ -65,7 +61,7 @@ void REPL()
     
     while (true) 
     {
-        std::string buf = readline(">> ");
+        std::string buf = readline("$ ");
         if (buf.length() > 0) 
         {
             add_history(buf.c_str());
@@ -92,7 +88,7 @@ void REPL()
             }
             else 
             {
-                std::cout << repr(obj) << std::endl;
+                std::cout << "\n> " << repr(obj) << std::endl;
             }
         }
     }

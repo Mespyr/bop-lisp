@@ -13,6 +13,7 @@
 (println (first str))
 (println (last str))
 (println (rest str))
+(println (getf str 2))
 
 (let new_list (list 44 45 46 47 48 49))
 (let sub_list (rest new_list))
@@ -22,7 +23,7 @@
 
 (println (getf new_list 2))
 (println 
-    (format (getf str 2) ' is the 3rd letter in "Hello World!".'))
+    (format (getf str 3) ' is the 3rd letter in "Hello World!".'))
 
 (let new_list (append 'appended value' new_list))
 (println (last new_list))

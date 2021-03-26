@@ -463,7 +463,7 @@ object Evaluator::evaluate(Node node)
         }
         
         else if (node.nodes.front().atom.value == "getf") {
-            if ( (int) node.nodes.size() < 3) {
+            if ((int) node.nodes.size() < 3) {
                 error_found = true;
                 error.type = ARGUMENT_ERROR;
                 error.arg = ArgumentError{"Insufficent number of arguments passed for 'getf'.", node.nodes.front().atom.line};
@@ -498,7 +498,7 @@ object Evaluator::evaluate(Node node)
                     error.type = INDEX_ERROR;
                     error.index = IndexError{"Index " + idx.value + " out of range.", node.nodes.front().atom.line};
                     return Null();
-                } 
+                }
                 return obj.list.at(atoi(idx.value.c_str()));
             } else if (obj.type == BOP_STRING) {
                 if (atoi(idx.value.c_str()) >= (int)obj.value.length()) {
@@ -509,7 +509,7 @@ object Evaluator::evaluate(Node node)
                 }
                 int idx_ = atoi(idx.value.c_str());
                 std::string str = "'"; 
-                str.push_back(obj.value.at(idx_));
+                str.push_back(repr(obj).at(idx_));
                 str.push_back('\'');
 
                 return make_object(BOP_STRING, str);

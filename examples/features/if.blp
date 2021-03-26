@@ -1,0 +1,29 @@
+; This shows multiple different features such as 
+    - if statements
+    - true or false like expressions
+;
+
+(if (= 12 44)
+    (println 'This will not print!')
+    (println 'This should print because 12 != 44.'))
+
+(let word (read 'Word: '))
+
+(let x (= word 'Bop'))
+
+(if x 
+    (println 'You entered the right word!')
+    (println 'You entered the wrong word!'))
+
+; if lists are empty, then they are nil or 0
+    lists that aren't empty return themselves
+;
+
+(let x (list))
+(if x 
+    (println 'The list isnt empty!')
+    (println 'The list is empty!'))
+(let x (list 1 2 3 4 5))
+(if x 
+    (println 'The list isnt empty!')
+    (println 'The list is empty!'))

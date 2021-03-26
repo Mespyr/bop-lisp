@@ -1,5 +1,6 @@
 #include "../include/env.h"
 
+// Env
 object Env::at_key(std::string key) 
 {
     if (has_key(key))
@@ -32,4 +33,27 @@ void Env::set_key(std::string key, object value)
     {
         add_key(key, value);
     }
+}
+
+
+// Env Stack
+Env Env_Stack::back() 
+{
+    return stack.back();
+}
+
+void Env_Stack::push(Env e) 
+{
+    stack.push_back(e);
+} 
+
+void Env_Stack::pop() 
+{
+    stack.pop_back();
+}
+
+void Env_Stack::new_() 
+{
+    Env n = back();
+    stack.push_back(n);
 }

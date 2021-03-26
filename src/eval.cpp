@@ -493,7 +493,7 @@ object Evaluator::evaluate(Node node)
             } 
             
             if (obj.type == BOP_LIST) {
-                if (atoi(idx.value.c_str()) >= (int)obj.list.size()) {
+                if (atoi(idx.value.c_str()) > (int)obj.list.size()-1) {
                     error_found = true;
                     error.type = INDEX_ERROR;
                     error.index = IndexError{"Index " + idx.value + " out of range.", node.nodes.front().atom.line};
@@ -501,7 +501,7 @@ object Evaluator::evaluate(Node node)
                 }
                 return obj.list.at(atoi(idx.value.c_str()));
             } else if (obj.type == BOP_STRING) {
-                if (atoi(idx.value.c_str()) >= (int)obj.value.length()) {
+                if (atoi(idx.value.c_str()) >= (int)repr(obj).length()) {
                     error_found = true;
                     error.type = INDEX_ERROR;
                     error.index = IndexError{"Index " + idx.value + " out of range.", node.nodes.front().atom.line};

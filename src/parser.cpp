@@ -22,6 +22,7 @@ TokenList tokenize(std::string code)
             in_comment = !in_comment;
         } 
         else if(in_comment);
+
         else if (buf == '\'') 
         {
             word.push_back(buf);

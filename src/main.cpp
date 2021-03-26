@@ -85,6 +85,7 @@ void REPL()
             {
                 std::cout << eval.error.error() << std::endl;
                 ast_buf.eof = true;
+                eval.error_found = false;
             }
             else 
             {

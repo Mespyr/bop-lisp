@@ -1,57 +1,35 @@
-#include "test_env.h"
+#include <iostream>
+#include <map>
 
-// Slightly modified Env struct 
-struct test_env
+using std::cout; using std::cin;
+using std::endl; using std::string;
+using std::map; using std::copy;
+
+template<typename Map>
+void PrintMap(Map& m)
 {
-    std::vector<std::string> keys;
-    std::vector<std::string> values;
-
-    bool has_key(std::string key) {
-        for (int i = 0; i < (int) keys.size(); i++) {
-            std::string key_comp = keys.at(i);
-            if (key_comp == key) return true;
-        }
-        return false;
+    cout << "[ ";
+    for (auto &item : m) {
+        cout << item.first << ":" << item.second << " ";
     }
-
-    void add_key(std::string key, std::string value) {
-        keys.push_back(key);
-        values.push_back(value);
-    }
-    
-    void set_key(std::string key, std::string value) {
-        if(has_key(key)) {
-            for (int i = 0; i < (int) keys.size(); i++) {
-                std::string key_comp = keys.at(i);
-                if (key_comp == key) {
-                    values[i] = value; return;
-                }
-            }
-        } else add_key(key, value);
-    }
-
-    void print() {
-        for (int i = 0; i < (int) keys.size(); i++) {
-            std::string key = keys.at(i);
-            std::string value = values.at(i);
-            std::cout << key << "  :  " << value << std::endl;
-        }
-    }
-};
-
-int main(int argc, char const *argv[])
-{
-    test_env env;
-    env.set_key("Hello", " world!");
-    env.set_key("My Second Key", "This value!");
-    env.print();
-    env.set_key("My Second Key", "New value!");
-    env.print();
-    pass_default_x("HIIII", 12);
-    pass_default_x("TOKHB", 12);
-    return 0;
+    cout << "]\n";
 }
 
-void pass_default_x(std::string value, int x) {
-    std::cout << value << x;
+int main() {
+    map<std::string, string> map1 = {{"loop", "Apple",},
+                                {"boop", "Banana",},
+                                {"snoop", "Mango",},
+                                {"coop", "Raspberry",},
+                                {"Toop", "Blackberry",},
+                                {"hehe", "Cocoa",}};
+
+    cout << "map1 - ";
+    PrintMap(map1);
+    cout << endl;
+    cout << map1.at("loop");
+    cout << map1.at("snoop");
+
+    map1.find("boop")->second = "NOOOO";
+    cout << map1.at("boop");
+    return EXIT_SUCCESS;
 }

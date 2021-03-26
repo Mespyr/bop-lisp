@@ -2,61 +2,34 @@
 
 object Env::at_key(std::string key) 
 {
-    for (int i = 0; i < (int) keys.size(); i++) 
+    if (has_key(key))
     {
-        std::string key_comp = keys.at(i);
-        if (key_comp == key) 
-        {
-            return values.at(i);
-        }
+        return dict.at(key);
     }
-    return make_object(BOP_NUMBER, "0");
+    else 
+    {
+        return make_object(BOP_NUMBER, "0");
+    }
 }
 
 bool Env::has_key(std::string key) 
 {
-    for (int i = 0; i < (int) keys.size(); i++) 
-    {
-        std::string key_comp = keys.at(i);
-        if (key_comp == key) 
-        {
-            return true;
-        }
-    }
-    return false;
+    return dict.count(key);
 }
 
 void Env::add_key(std::string key, object value) 
 {
-    keys.push_back(key);
-    values.push_back(value);
+    dict.insert(std::pair<std::string, object>(key, value));
 }
 
 void Env::set_key(std::string key, object value) 
 {
     if (has_key(key)) 
     {
-        for (int i = 0; i < (int) keys.size(); i++) 
-        {
-            std::string key_comp = keys.at(i);
-            if (key_comp == key) 
-            {
-                values[i] = value; return;
-            }
-        }
+        dict.find(key)->second = value;
     } 
     else 
     {
         add_key(key, value);
-    }
-}
-
-void Env::print() 
-{
-    for (int i = 0; i < (int) keys.size(); i++) 
-    {
-        std::string key = keys.at(i);
-        object value = values.at(i);
-        std::cout << key << "  :  " << value.value << std::endl;
     }
 }

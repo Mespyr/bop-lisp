@@ -625,7 +625,7 @@ object Evaluator::evaluate(Node node)
         
         else if (node.nodes.front().atom.value == "push") 
         {
-            if ((int) node.nodes.size() <3) 
+            if ((int) node.nodes.size() < 3) 
             {
                 error_found = true;
                 error.type = ARGUMENT_ERROR;
@@ -661,6 +661,179 @@ object Evaluator::evaluate(Node node)
             obj.list.insert(obj.list.begin(), appender);
             // std::cout << appender.value << std::endl;
             return obj;
+        }
+
+        else if (node.nodes.front().atom.value == "sub")
+        {
+            if ((int) node.nodes.size() < 3) 
+            {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"Insufficent number of arguments passed for 'sub'.", node.nodes.front().atom.line};
+                return Null();
+            }
+            else if ((int) node.nodes.size() > 4) 
+            {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"Too many arguments passed for 'sub'.", node.nodes.front().atom.line};
+                return Null();
+            }
+            object obj = evaluate(node.nodes.at(1));
+            if (error_found)
+            {
+                return Null();
+            }
+            if (obj.type == BOP_LIST) 
+            {
+                object idx_start = evaluate(node.nodes.at(2));
+                if (error_found)
+                {
+                    return Null();
+                }
+                if (idx_start.type != BOP_NUMBER)
+                {
+                    error_found = true;
+                    error.type = TYPE_ERROR;
+                    error.type_ = TypeError{"Can't use value that isn't a number as the start index.", node.nodes.front().atom.line};
+                    return Null();
+                }
+                if (to_number(idx_start.value) > (int)obj.list.size() or to_number(idx_start.value) < 0)
+                {
+                    error_found = true;
+                    error.type = INDEX_ERROR;
+                    error.index = IndexError{"Index " + idx_start.value + " out of range.", node.nodes.front().atom.line};
+                    return Null();
+                }
+                if ((int)node.nodes.size() == 3)
+                {
+                    std::vector<object> sublist(obj.list.begin() + to_number(idx_start.value), obj.list.end());
+                    return make_object(BOP_LIST, "", sublist);
+                }
+                else 
+                {
+                    object idx_end = evaluate(node.nodes.at(3));
+                    if (error_found)
+                    {
+                        return Null();
+                    }
+                    if (idx_start.type != BOP_NUMBER)
+                    {
+                        error_found = true;
+                        error.type = TYPE_ERROR;
+                        error.type_ = TypeError{"Can't use value that isn't a number as the end index.", node.nodes.front().atom.line};
+                        return Null();
+                    }
+                    if (to_number(idx_end.value) > (int)obj.list.size() or to_number(idx_end.value) < 0)
+                    {
+                        error_found = true;
+                        error.type = INDEX_ERROR;
+                        error.index = IndexError{"Index " + idx_end.value + " out of range.", node.nodes.front().atom.line};
+                        return Null();
+                    }
+                    std::vector<object> sublist(obj.list.begin() + to_number(idx_start.value), obj.list.begin()+to_number(idx_end.value));
+                    return make_object(BOP_LIST, "", sublist);
+                }
+            }
+            else if (obj.type == BOP_STRING)
+            {
+                object idx_start = evaluate(node.nodes.at(2));
+                if (error_found)
+                {
+                    return Null();
+                }
+                if (idx_start.type != BOP_NUMBER)
+                {
+                    error_found = true;
+                    error.type = TYPE_ERROR;
+                    error.type_ = TypeError{"Can't use value that isn't a number as the start index.", node.nodes.front().atom.line};
+                    return Null();
+                }
+                if (to_number(idx_start.value) > (int)obj.value.length() or to_number(idx_start.value) < 0)
+                {
+                    error_found = true;
+                    error.type = INDEX_ERROR;
+                    error.index = IndexError{"Index " + idx_start.value + " out of range.", node.nodes.front().atom.line};
+                    return Null();
+                }
+                if ((int)node.nodes.size() == 3)
+                {
+                    return make_object(BOP_STRING, repr(obj).substr(to_number(idx_start.value)));
+                }
+                else 
+                {
+                    object idx_end = evaluate(node.nodes.at(3));
+                    if (error_found)
+                    {
+                        return Null();
+                    }
+                    if (idx_end.type != BOP_NUMBER)
+                    {
+                        error_found = true;
+                        error.type = TYPE_ERROR;
+                        error.type_ = TypeError{"Can't use value that isn't a number as the end index.", node.nodes.front().atom.line};
+                        return Null();
+                    }
+                    if (to_number(idx_end.value) > (int)obj.value.length() or to_number(idx_end.value) < 0)
+                    {
+                        error_found = true;
+                        error.type = INDEX_ERROR;
+                        error.index = IndexError{"Index " + idx_end.value + " out of range.", node.nodes.front().atom.line};
+                        return Null();
+                    }
+                    return make_object(BOP_STRING, "'"+repr(obj).substr(to_number(idx_start.value), to_number(idx_end.value))+"'");
+                }
+            }
+            else 
+            {
+                error_found = true;
+                error.type = TYPE_ERROR;
+                error.type_ = TypeError{"Can't get subvalue of value that isn't of type list or string.", node.nodes.front().atom.line};
+                return Null();
+            }
+        }
+
+        else if (node.nodes.front().atom.value == "len")
+        {
+            if ((int) node.nodes.size() == 1) 
+            {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"No arguments passed for 'len'.", node.nodes.front().atom.line};
+                return Null();
+            }
+            else if ((int) node.nodes.size() > 2) 
+            {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"Too many arguments passed for 'len'.", node.nodes.front().atom.line};
+                return Null();
+            }
+            object obj = evaluate(node.nodes.at(1));
+            if (error_found)
+            {
+                return Null();
+            }
+            if (obj.type == BOP_LIST)
+            {
+                return make_object(BOP_NUMBER, std::to_string(obj.list.size()));
+            }
+            else if (obj.type == BOP_STRING)
+            {
+                return make_object(BOP_NUMBER, std::to_string(repr(obj).length()));
+            }
+            else 
+            {
+                error_found = true;
+                error.type = TYPE_ERROR;
+                error.type_ = TypeError{"Can't get length from type that isn't string or list.", node.nodes.front().atom.line};
+                return Null();
+            }
+        }
+
+        else if (node.nodes.front().atom.value == "setf")
+        {
+            
         }
 
         else if (node.nodes.front().atom.value == "read") 

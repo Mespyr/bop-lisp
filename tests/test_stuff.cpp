@@ -1,5 +1,6 @@
 #include <iostream>
 #include <map>
+#include <vector>
 
 using std::cout; using std::cin;
 using std::endl; using std::string;
@@ -31,5 +32,12 @@ int main() {
 
     map1.find("boop")->second = "NOOOO";
     cout << map1.at("boop");
+
+    std::vector<int> list = {1, 2, 3, 4, 5, 6, 7, 8};
+
+    std::vector<int> slice_of_x(list.begin() + 3, list.end());
+
+    std::cout << slice_of_x.front() << " " << slice_of_x.back();
+
     return EXIT_SUCCESS;
 }

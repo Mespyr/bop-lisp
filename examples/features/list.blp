@@ -1,32 +1,65 @@
-; list and index example ;
+; Lists ; 
 (let x (list 1 2 3 4))
 (println x)
 (println (first x))
 (println (last x))
 
+; Lists inside of lists ;
 (let list_in_lists 
     (list 21 15 16 
         (list 12 15)))
 (println (last (last list_in_lists)))
 
+; string indexing ; 
 (let str 'Hello World!')
 (println (first str))
 (println (last str))
 (println (rest str))
-(println (getf str 2))
 
+
+; getting parts of a list ; 
 (let new_list (list 44 45 46 47 48 49))
 (let sub_list (rest new_list))
 
 (println (first sub_list))
 (println (first new_list))
 
+; getting parts of a string ; 
 (println (getf new_list 2))
 (println 
     (format (getf str 2) ' is the 3rd letter in "Hello World!".'))
 
-(let new_list (append 'appended value' new_list))
+; appending values to end of lists ; 
+(let new_list 
+    (append 'appended value' new_list))
 (println (last new_list))
 
-(let sub_list (push 'Pushed Value' sub_list))
+; pushing value to front of list ; 
+(let sub_list 
+    (push 'Pushed Value' sub_list))
 (println (first sub_list))
+
+
+; Substrings and sublists ; 
+(let this_list (list 1 2 3 4 5 6 7 8 9 0))
+(let my_str 'This decent string.')
+(let sub_str (sub my_str 2 10))
+(let sub_list (sub this_list 2 7))
+
+(println sub_str)
+(println 
+    (format 
+        (first sub_list) ' is the first: ' 
+            (last sub_list) ' is the last.'))
+
+
+; string and list length ;
+(println (len sub_list))
+(println (len sub_str))
+
+
+; set parts of a list at an index ;
+(setf sub_list 1 12)
+(setf sub_str 3 ' Set with setf ')
+(println (getf sub_list 1))
+(println sub_str)

@@ -24,7 +24,7 @@ std::string repr(object obj)
 
 double to_number(std::string fl) 
 {
-    return atof(fl.c_str());
+    return std::stod(fl.c_str());
 }
 
 object make_object(Type type_, std::string value, std::vector<object> list) 

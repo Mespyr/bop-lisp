@@ -24,6 +24,7 @@ public:
     ErrorMap error;
     bool error_found = false;
     object evaluate(Node node);
+    void destructive_return(std::string name, object value);
 };
 
 

@@ -66,7 +66,7 @@ void REPL()
         {
             add_history(buf.c_str());
         }
-        TokenList tokens = tokenize(buf);
+        TokenList tokens = tokenize(buf+" ");
         AST ast = parse(tokens);
 
         if (ast.error_found) 
@@ -89,7 +89,7 @@ void REPL()
             }
             else 
             {
-                std::cout << "\n> " << repr(obj) << std::endl;
+                std::cout << "\n=> " << repr(obj) << std::endl;
             }
         }
     }

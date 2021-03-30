@@ -39,5 +39,10 @@ int main() {
 
     std::cout << slice_of_x.front() << " " << slice_of_x.back();
 
+    float x = atof("12.00");
+    float y = atof("44.00");
+    float res = x+y;
+    std::cout << std::endl << res << std::endl;
+
     return EXIT_SUCCESS;
 }

@@ -30,38 +30,37 @@ std::string Function_format_string(std::vector<object> objs)
 // Math stuff #################################################################
 std::string Function_add_nums(std::vector<object> objs) 
 {
-    float res = 0;
-    for (int i = 0; i < (int)objs.size(); i++) 
+    double res = to_number(objs.at(0).value);
+    for (int i = 1; i < (int)objs.size(); i++) 
     {
-        res += atof(repr(objs.at(i)).c_str());
+        res += to_number(objs.at(i).value);
     }
     return std::to_string(res);
 }
 std::string Function_subtract_nums(std::vector<object> objs) 
 {
-    float res = atof(repr(
-                        objs.at(0)).c_str());
+    double res = to_number(objs.at(0).value);
     for (int i = 1; i < (int)objs.size(); i++) 
     {
-        res -= atof(repr(objs.at(i)).c_str());
+        res -= to_number(objs.at(i).value);
     }
     return std::to_string(res);
 }
 std::string Function_times_nums(std::vector<object> objs) 
 {
-    float res = atof(repr(objs.at(0)).c_str());
+    double res = to_number(objs.at(0).value);
     for (int i = 1; i < (int)objs.size(); i++) 
     {
-        res *= atof(repr(objs.at(i)).c_str());
+        res *= to_number(objs.at(i).value);
     }
     return std::to_string(res);
 }
 std::string Function_div_nums(std::vector<object> objs) 
 {
-    float res = atof(repr(objs.at(0)).c_str());
+    double res = to_number(objs.at(0).value);
     for (int i = 1; i < (int)objs.size(); i++) 
     {
-        res /= atof(repr(objs.at(i)).c_str());
+        res /= to_number(objs.at(i).value);
     }
     return std::to_string(res);
 }
@@ -69,6 +68,15 @@ std::string Function_div_nums(std::vector<object> objs)
 
 
 // Evaluate ###################################################################
+void Evaluator::destructive_return(std::string name, object value)
+{
+    Env top = env_stack.back();
+    top.set_key(name, value);
+    env_stack.pop();
+    env_stack.push(top);
+}
+
+
 object Evaluator::evaluate(Node node) 
 {
     if (node.type == ATOM) 
@@ -512,20 +520,20 @@ object Evaluator::evaluate(Node node)
             }
         }
         
-        else if (node.nodes.front().atom.value == "getf") 
+        else if (node.nodes.front().atom.value == "nth") 
         {
             if ((int) node.nodes.size() < 3) 
             {
                 error_found = true;
                 error.type = ARGUMENT_ERROR;
-                error.arg = ArgumentError{"Insufficent number of arguments passed for 'getf'.", node.nodes.front().atom.line};
+                error.arg = ArgumentError{"Insufficent number of arguments passed for 'nth'.", node.nodes.front().atom.line};
                 return Null();
             }
             else if ((int) node.nodes.size() > 3) 
             {
                 error_found = true;
                 error.type = ARGUMENT_ERROR;
-                error.arg = ArgumentError{"Too many arguments passed for 'getf'.", node.nodes.front().atom.line};
+                error.arg = ArgumentError{"Too many arguments passed for 'nth'.", node.nodes.front().atom.line};
                 return Null();
             }
 
@@ -599,18 +607,16 @@ object Evaluator::evaluate(Node node)
                 error.arg = ArgumentError{"Too many arguments passed for 'append'.", node.nodes.front().atom.line};
                 return Null();
             }
-
-            object obj = evaluate(node.nodes.at(2));
-            if (error_found)
-            {
-                return Null();
-            }
             object appender = evaluate(node.nodes.at(1));
             if (error_found)
             {
                 return Null();
             }
-
+            object obj = evaluate(node.nodes.at(2));
+            if (error_found)
+            {
+                return Null();
+            }
             if (obj.type != BOP_LIST) 
             {
                 error_found = true;
@@ -620,6 +626,10 @@ object Evaluator::evaluate(Node node)
             }
             obj.list.push_back(appender);
             // std::cout << appender.value << std::endl;
+            if (node.nodes.at(2).type == ATOM)
+            {
+                destructive_return(node.nodes.at(2).atom.value, obj);
+            }
             return obj;
         }
         
@@ -639,13 +649,12 @@ object Evaluator::evaluate(Node node)
                 error.arg = ArgumentError{"Too many arguments passed for 'push'.", node.nodes.front().atom.line};
                 return Null();
             }
-
-            object obj = evaluate(node.nodes.at(2));
+            object appender = evaluate(node.nodes.at(1));
             if (error_found)
             {
                 return Null();
             }
-            object appender = evaluate(node.nodes.at(1));
+            object obj = evaluate(node.nodes.at(2));
             if (error_found)
             {
                 return Null();
@@ -660,6 +669,10 @@ object Evaluator::evaluate(Node node)
             }
             obj.list.insert(obj.list.begin(), appender);
             // std::cout << appender.value << std::endl;
+            if (node.nodes.at(2).type == ATOM)
+            {
+                destructive_return(node.nodes.at(2).atom.value, obj);
+            }
             return obj;
         }
 
@@ -833,7 +846,20 @@ object Evaluator::evaluate(Node node)
 
         else if (node.nodes.front().atom.value == "setf")
         {
-            
+            if ((int) node.nodes.size() < 4) 
+            {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"Insufficent number of arguments passed for 'setf'.", node.nodes.front().atom.line};
+                return Null();
+            }
+            else if ((int) node.nodes.size() > 4) 
+            {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"Too many arguments passed for 'setf'.", node.nodes.front().atom.line};
+                return Null();
+            }
         }
 
         else if (node.nodes.front().atom.value == "read") 

@@ -105,7 +105,7 @@ object Evaluator::evaluate(Node node)
             }
         }
     } 
-    else 
+    else
     {
         if (node.nodes.front().atom.value == "println") 
         {

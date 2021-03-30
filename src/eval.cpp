@@ -737,14 +737,14 @@ object Evaluator::evaluate(Node node)
                         error.type_ = TypeError{"Can't use value that isn't a number as the end index.", node.nodes.front().atom.line};
                         return Null();
                     }
-                    if (to_number(idx_end.value) > (int)obj.list.size() or to_number(idx_end.value) < 0)
+                    if (to_number(idx_end.value) > (int)obj.list.size()-1 or to_number(idx_end.value) < 0)
                     {
                         error_found = true;
                         error.type = INDEX_ERROR;
                         error.index = IndexError{"Index " + idx_end.value + " out of range.", node.nodes.front().atom.line};
                         return Null();
                     }
-                    std::vector<object> sublist(obj.list.begin() + to_number(idx_start.value), obj.list.begin()+to_number(idx_end.value));
+                    std::vector<object> sublist(obj.list.begin() + to_number(idx_start.value), obj.list.begin()+to_number(idx_end.value)+1);
                     return make_object(BOP_LIST, "", sublist);
                 }
             }
@@ -762,7 +762,7 @@ object Evaluator::evaluate(Node node)
                     error.type_ = TypeError{"Can't use value that isn't a number as the start index.", node.nodes.front().atom.line};
                     return Null();
                 }
-                if (to_number(idx_start.value) > (int)obj.value.length() or to_number(idx_start.value) < 0)
+                if (to_number(idx_start.value) > (int)obj.value.length()-1 or to_number(idx_start.value) < 0)
                 {
                     error_found = true;
                     error.type = INDEX_ERROR;
@@ -860,6 +860,50 @@ object Evaluator::evaluate(Node node)
                 error.arg = ArgumentError{"Too many arguments passed for 'setf'.", node.nodes.front().atom.line};
                 return Null();
             }
+            object obj = evaluate(node.nodes.at(1));
+            if (error_found)
+            {
+                return Null();
+            }
+            if (obj.type != BOP_LIST and obj.type != BOP_STRING)
+            {
+                error_found = true;
+                error.type = TYPE_ERROR;
+                error.type_ = TypeError{"Can't set value at an index to type isn't a list or string.", node.nodes.at(1).atom.line};
+                return Null();
+            }
+            object idx = evaluate(node.nodes.at(2));
+            if (error_found)
+            {
+                return Null();
+            }
+            if (idx.type != BOP_NUMBER)
+            {
+                error_found = true;
+                error.type = TYPE_ERROR;
+                error.type_ = TypeError{"Can't get index " + obj.value + " since it isn't a number.", node.nodes.at(1).atom.line};
+                return Null();
+            }
+            object value = evaluate(node.nodes.back());
+            if (error_found)
+            {
+                return Null();
+            }
+            if (obj.type == BOP_LIST)
+            {
+                obj.list[to_number(idx.value)] = value;
+            }
+            else if (obj.type == BOP_STRING)
+            {
+                std::string repr_string = repr(obj);
+                repr_string.insert(to_number(idx.value), repr(value));
+                obj.value = "'" + repr_string + "'";
+            }
+            if (node.nodes.at(1).type == ATOM)
+            {
+                destructive_return(node.nodes.at(1).atom.value, obj);
+            }
+            return obj;
         }
 
         else if (node.nodes.front().atom.value == "read") 

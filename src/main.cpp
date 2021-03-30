@@ -89,7 +89,7 @@ void REPL()
             }
             else 
             {
-                std::cout << "\n=> " << repr(obj) << std::endl;
+                std::cout << "> " << repr(obj) << std::endl;
             }
         }
     }

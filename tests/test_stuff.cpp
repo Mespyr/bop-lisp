@@ -44,5 +44,10 @@ int main() {
     float res = x+y;
     std::cout << std::endl << res << std::endl;
 
+    std::string str = "Hello world";
+    std::cout << str.substr(0, 5) << std::endl;
+    std::vector<int> test_vec{0, 1, 2, 3, 4, 5, 6, 7};
+    std::vector<int> sublist(test_vec.begin()+3, test_vec.begin()+6);
+    std::cout << sublist.front() << " " << sublist.back() << std::endl;
     return EXIT_SUCCESS;
 }

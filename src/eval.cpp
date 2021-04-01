@@ -949,7 +949,15 @@ object Evaluator::evaluate(Node node)
                 return Null();
             }
             object comp1 = evaluate(node.nodes.at(1));
+            if (error_found)
+            {
+                return Null();
+            }
             object comp2 = evaluate(node.nodes.at(2));
+            if (error_found)
+            {
+                return Null();
+            }
             if (comp1.type == comp2.type)
             {
                 if (comp1.type != BOP_LIST)
@@ -996,6 +1004,10 @@ object Evaluator::evaluate(Node node)
                 return Null();
             }
             object comp1 = evaluate(node.nodes.at(1));
+            if (error_found)
+            {
+                return Null();
+            }
             if (comp1.type == BOP_NUMBER)
             {
                 if (comp1.value == "0")
@@ -1006,6 +1018,44 @@ object Evaluator::evaluate(Node node)
             return Null();
         }
         
+        else if (node.nodes.front().atom.value == "if")
+        {
+            if ((int) node.nodes.size() < 4) 
+            {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"Insufficent number of arguments passed for 'if'.", node.nodes.front().atom.line};
+                return Null();
+            }
+            else if ((int) node.nodes.size() > 4) 
+            {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"Too many arguments passed for 'if'.", node.nodes.front().atom.line};
+                return Null();
+            }
+            object cond = evaluate(node.nodes.at(1));
+            if (cond.type == BOP_NUMBER)
+            {
+                if (cond.value != "0")
+                {
+                    return evaluate(node.nodes.at(2));
+                }
+            }
+            else if (cond.type == BOP_LIST)
+            {
+                if ((int)cond.list.size() != 0)
+                {
+                    return evaluate(node.nodes.at(2));
+                }
+            }
+            if ((int)node.nodes.size()==4)
+            {
+                return evaluate(node.nodes.at(3));
+            }
+            return Null();
+        }
+
         else 
         {
             error_found = true;

@@ -1035,6 +1035,10 @@ object Evaluator::evaluate(Node node)
                 return Null();
             }
             object cond = evaluate(node.nodes.at(1));
+            if (error_found)
+            {
+                return Null();
+            }
             if (cond.type == BOP_NUMBER)
             {
                 if (cond.value != "0")

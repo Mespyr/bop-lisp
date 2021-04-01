@@ -4,7 +4,7 @@ Comments are surrounded by semicolons ;
 
 ; Recursive Fibonacci Sequence ;
 (let fib (fn (n)
-    (if (or (= n 1) (= n 0)) n 
+    (if (any (= n 1) (= n 0)) n 
         (+ (fib (- n 1))
             (fib (- n 2))))))
 

@@ -1060,6 +1060,28 @@ object Evaluator::evaluate(Node node)
             return Null();
         }
 
+        else if (node.nodes.front().atom.value == "do")
+        {
+            if ((int) node.nodes.size() == 1) 
+            {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"Nothing passed for 'do'.", node.nodes.front().atom.line};
+                return Null();
+            }
+            else 
+            {
+                for (int i = 1; i < (int)node.nodes.size(); i++)
+                {
+                    evaluate(node.nodes.at(i));
+                    if (error_found)
+                    {
+                        return Null();
+                    }
+                }
+            }
+        }
+
         else 
         {
             error_found = true;

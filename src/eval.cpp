@@ -931,7 +931,81 @@ object Evaluator::evaluate(Node node)
             getline(std::cin, input);
             return make_object(BOP_STRING, "'"+input+"'");
         } 
-
+        
+        else if (node.nodes.front().atom.value == "=")
+        {
+            if ((int) node.nodes.size() == 1) 
+            {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"No arguments passed for '='.", node.nodes.front().atom.line};
+                return Null();
+            }
+            else if ((int) node.nodes.size() > 3) 
+            {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"Too many arguments passed for '='.", node.nodes.front().atom.line};
+                return Null();
+            }
+            object comp1 = evaluate(node.nodes.at(1));
+            object comp2 = evaluate(node.nodes.at(2));
+            if (comp1.type == comp2.type)
+            {
+                if (comp1.type != BOP_LIST)
+                {
+                    if (comp1.value == comp2.value)
+                    {
+                        return make_object(BOP_NUMBER, "1");
+                    }
+                    return Null();
+                }
+                if (comp1.list.size() != comp2.list.size())
+                {
+                    return Null();
+                }
+                std::string value = "1";
+                for (int i = 0; i < (int)comp1.list.size(); i++)
+                {
+                    object comp1_list_value = comp1.list.at(i);
+                    object comp2_list_value = comp2.list.at(i);
+                    if (comp2_list_value.type != comp1_list_value.type)
+                    {
+                        value = "0";
+                        break;
+                    }
+                }
+                return make_object(BOP_NUMBER, value);
+            }
+        }
+        
+        else if (node.nodes.front().atom.value == "!")
+        {
+            if ((int) node.nodes.size() == 1) 
+            {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"No arguments passed for '!'.", node.nodes.front().atom.line};
+                return Null();
+            }
+            else if ((int) node.nodes.size() > 2) 
+            {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"Too many arguments passed for '!'.", node.nodes.front().atom.line};
+                return Null();
+            }
+            object comp1 = evaluate(node.nodes.at(1));
+            if (comp1.type == BOP_NUMBER)
+            {
+                if (comp1.value == "0")
+                {
+                    return make_object(BOP_NUMBER, "1");
+                }
+            }
+            return Null();
+        }
+        
         else 
         {
             error_found = true;

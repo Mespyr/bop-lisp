@@ -962,6 +962,17 @@ object Evaluator::evaluate(Node node)
             {
                 if (comp1.type != BOP_LIST)
                 {
+                    if (comp1.type == BOP_NUMBER)
+                    {
+                        int n1, n2;
+                        n1 = to_number(comp1.value);
+                        n2 = to_number(comp2.value);
+                        if (n1==n2)
+                        {
+                            return make_object(BOP_NUMBER, "1");
+                        }
+                        return Null();
+                    }
                     if (comp1.value == comp2.value)
                     {
                         return make_object(BOP_NUMBER, "1");
@@ -1082,6 +1093,34 @@ object Evaluator::evaluate(Node node)
             }
         }
 
+        else if (node.nodes.front().atom.value == "while")
+        {
+            if ((int) node.nodes.size() < 3) 
+            {
+                error_found = true;
+                error.type = ARGUMENT_ERROR;
+                error.arg = ArgumentError{"Insufficent number of arguments for 'while'.", node.nodes.front().atom.line};
+                return Null();
+            }
+            else 
+            {
+                object cond = evaluate(node.nodes.at(1));
+                while (cond.value != "0")
+                {
+                    evaluate(node.nodes.back());
+                    if (error_found)
+                    {
+                        return Null();
+                    }
+                    cond = evaluate(node.nodes.at(1));
+                    if (error_found)
+                    {
+                        return Null();
+                    }
+                }
+                return Null();
+            }
+        }
         else 
         {
             error_found = true;

@@ -1,0 +1,5 @@
+(let word (read 'Word: '))
+(while (! (= word 'Hello'))
+    (do (println 'Incorrect!')
+        (let word (read 'Word: '))))
+(println 'Correct!')

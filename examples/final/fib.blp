@@ -1,0 +1,7 @@
+; Recursive Fibonacci Sequence ;
+(let fibr (fn (n)
+    (if (any (= n 1) (= n 0)) n 
+        (+ (fib (- n 1))
+            (fib (- n 2))))))
+
+(println (fibr 10))

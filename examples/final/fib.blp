@@ -1,7 +1,13 @@
-; Recursive Fibonacci Sequence ;
-(let fibr (fn (n)
-    (if (any (= n 1) (= n 0)) n 
-        (+ (fib (- n 1))
-            (fib (- n 2))))))
+; fib ;
+(let terms (list))
+(let length 40)
 
-(println (fibr 10))
+(let num 0)
+(let num_ 1)
+
+(while (! (= (len terms) length))  
+    (do (println num)
+        (let temp (+ num num_))
+        (let num num_)
+        (let num_ temp)
+        (append num_ terms)))

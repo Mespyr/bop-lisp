@@ -1,25 +1,13 @@
 ; Fizzbuzz Example ;
-(let div_by5 
-    (fn (x) (! (% x 5))))
+(let x 0)
+(let limit 100)
 
-(let div_by3 
-    (fn (x) (! (% x 3))))
-
-(let div_by3_5 
-    (fn (x) 
-        (all (div_by3 x) (div_by5 x))))
-
-(let fizzbuzz 
-    (fn (x limit)
-        (while (less x limit) (do 
-            (let x (+ x 1))
-            (if (div_by3_5 x) 
-                (println 'Fizzbuzz')
-                (if (div_by3 x) 
-                    (println 'Fizz')
-                    (if (div_by5 x) 
-                        (println 'Buzz') 
-                        (println x))))))))
-
-; start fizzbuzz from zero to 100 ;
-(fizzbuzz 0 100) 
+(while (! (= x limit)) (do 
+    (let x (+ x 1))
+    (if (div_by3_5 x) 
+        (println 'Fizzbuzz')
+        (if (div_by3 x) 
+            (println 'Fizz')
+            (if (div_by5 x) 
+                (println 'Buzz') 
+                (println x))))))

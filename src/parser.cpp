@@ -109,10 +109,10 @@ bool is_number(std::string value)
         {
             dec_point_found = !dec_point_found;
             ret = !ret;
-            if (!ret) 
-            {
-                break;
-            }
+        }
+        if (!ret) 
+        {
+            break;
         }
     } 
     return ret;

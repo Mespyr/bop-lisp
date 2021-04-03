@@ -1,13 +1,16 @@
 ; fib ;
 (let terms (list))
-(let length 40)
+(let length 20)
 
 (let num 0)
 (let num_ 1)
 
 (while (! (= (len terms) length))  
-    (do (println num)
-        (let temp (+ num num_))
+    (do (let temp (+ num num_))
         (let num num_)
         (let num_ temp)
         (append num_ terms)))
+
+(while (! (= (len terms) 0))
+    (do (println (first terms))
+        (let terms (rest terms))))

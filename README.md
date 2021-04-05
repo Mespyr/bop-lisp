@@ -17,3 +17,7 @@ cd bop
 and the run `make`.
 
 This will produce an executable called `bop`.
+
+## Why does this exist?
+
+I made this to practice coding in C++ and making a lisp language. 
